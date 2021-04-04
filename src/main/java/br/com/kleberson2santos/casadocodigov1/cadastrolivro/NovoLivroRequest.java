@@ -69,6 +69,6 @@ public class NovoLivroRequest {
         Assert.state(autor != null, "Você está querendo cadastrar um livro para um autor que não existe no banco  "+idAutor);
         Assert.state(categoria != null, "Você está querendo cadastrar um livro para uma categoria que não existe no banco  "+idCategoria);
 
-        return new Livro(titulo, resumo, sumario, preco, numeroPaginas, isbn, dataPublicacao, categoria, autor);
+        return new Livro(titulo, resumo, sumario, preco, numeroPaginas, isbn, dataPublicacao, autor, categoria);
     }
 }
