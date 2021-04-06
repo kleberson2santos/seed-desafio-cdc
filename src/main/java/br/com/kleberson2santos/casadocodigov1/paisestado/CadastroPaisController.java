@@ -1,4 +1,4 @@
-package br.com.kleberson2santos.casadocodigov1.cadastropais;
+package br.com.kleberson2santos.casadocodigov1.paisestado;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
