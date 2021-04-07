@@ -22,6 +22,10 @@ public class ExistsIdValidator implements ConstraintValidator<ExistsId, Object> 
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
+       if(value == null){
+           return true;
+       }
+
         List<?> list = manager.createQuery("select 1 from " + klass.getName() + " where " + entityId + "=:value")
                 .setParameter("value", value).getResultList();
         Assert.state(list.size() <=1, "aconteceu algo bizarro e você tem mais de um " + klass + " com o id " + entityId + " com o valor " + value);
