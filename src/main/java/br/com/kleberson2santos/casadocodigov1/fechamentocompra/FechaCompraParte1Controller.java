@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
 @RestController
@@ -14,6 +16,8 @@ public class FechaCompraParte1Controller {
 
     @Autowired
     private EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
+    @PersistenceContext
+    private EntityManager manager;
 
     @InitBinder
     public void init(WebDataBinder binder){
@@ -22,6 +26,7 @@ public class FechaCompraParte1Controller {
 
     @PostMapping("/compras")
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
-        return request.toString();
+        Compra novaCompra = request.toModel(manager);
+        return novaCompra.toString();
     }
 }

@@ -8,6 +8,8 @@ import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.util.Assert;
 
+import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,8 +41,15 @@ public class NovaCompraRequest {
     private String telefone;
     @NotBlank
     private String cep;
+    @Valid
+    @NotNull
+    private NovoPedidoRequest pedido;
 
-    public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome, @NotBlank String sobrenome, @NotBlank String documento, @NotBlank String endereco, @NotBlank String complemento, @NotBlank String cidade, @NotNull Long idPais, Long idEstado, @NotBlank String telefone, @NotBlank String cep) {
+    public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome, @NotBlank String sobrenome,
+                             @NotBlank String documento, @NotBlank String endereco, @NotBlank String complemento,
+                             @NotBlank String cidade, @NotNull Long idPais, Long idEstado, @NotBlank String telefone,
+                             @NotBlank String cep,
+                             @NotNull @Valid NovoPedidoRequest pedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -52,10 +61,15 @@ public class NovaCompraRequest {
         this.idEstado = idEstado;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = pedido;
     }
 
     public String getDocumento() {
         return documento;
+    }
+
+    public NovoPedidoRequest getPedido() {
+        return pedido;
     }
 
     public boolean documentoValido() {
@@ -84,6 +98,7 @@ public class NovaCompraRequest {
                 ", idEstado=" + idEstado +
                 ", telefone='" + telefone + '\'' +
                 ", cep='" + cep + '\'' +
+                ", pedido=" + pedido +
                 '}';
     }
 
@@ -93,5 +108,19 @@ public class NovaCompraRequest {
 
     public Long getIdEstado() {
         return idEstado;
+    }
+
+    public Compra toModel(EntityManager manager) {
+        @NotNull Pais pais = manager.find(Pais.class, idPais);
+        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento,
+                pais, telefone, cep);
+        if ( idEstado != null){
+            compra.setEstado(manager.find(Estado.class, idEstado));
+        }
+        return compra;
+    }
+
+    public boolean temEstado() {
+        return idEstado != null;
     }
 }
