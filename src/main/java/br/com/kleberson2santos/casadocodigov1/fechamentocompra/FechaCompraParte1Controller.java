@@ -1,6 +1,7 @@
 package br.com.kleberson2santos.casadocodigov1.fechamentocompra;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,17 +17,21 @@ public class FechaCompraParte1Controller {
 
     @Autowired
     private EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
+    @Autowired
+    private EstadoObrigatorioValidator estadoObrigatorioValidator;
     @PersistenceContext
     private EntityManager manager;
 
     @InitBinder
     public void init(WebDataBinder binder){
-        binder.addValidators(estadoPertenceAPaisValidator);
+        binder.addValidators(estadoPertenceAPaisValidator, estadoObrigatorioValidator);
     }
 
     @PostMapping("/compras")
+    @Transactional
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
         Compra novaCompra = request.toModel(manager);
+        manager.persist(novaCompra);
         return novaCompra.toString();
     }
 }

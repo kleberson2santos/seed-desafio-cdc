@@ -14,7 +14,6 @@ public class Livro {
     @Deprecated
     public Livro() {
     }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -102,5 +101,20 @@ public class Livro {
 
     public Autor getAutor() {
         return autor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Livro livro = (Livro) o;
+
+        return isbn.equals(livro.isbn);
+    }
+
+    @Override
+    public int hashCode() {
+        return isbn.hashCode();
     }
 }

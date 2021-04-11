@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.function.Function;
 
 public class NovaCompraRequest {
 
@@ -112,15 +113,27 @@ public class NovaCompraRequest {
 
     public Compra toModel(EntityManager manager) {
         @NotNull Pais pais = manager.find(Pais.class, idPais);
+        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
         Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento,
-                pais, telefone, cep);
+                pais, telefone, cep, funcaoCriacaoPedido);
         if ( idEstado != null){
             compra.setEstado(manager.find(Estado.class, idEstado));
         }
+
+
+
         return compra;
     }
 
     public boolean temEstado() {
         return idEstado != null;
+    }
+
+    public boolean naoTemEstado() {
+        return !temEstado();
+    }
+
+    public boolean temPais(){
+        return idPais != null;
     }
 }

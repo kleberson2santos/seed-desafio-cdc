@@ -5,13 +5,18 @@ import br.com.kleberson2santos.casadocodigov1.paisestado.Estado;
 import br.com.kleberson2santos.casadocodigov1.paisestado.Pais;
 import org.springframework.util.Assert;
 
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.function.Function;
 
+@Entity
 public class Compra {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Email
     @NotBlank
     private final String email;
@@ -35,11 +40,13 @@ public class Compra {
     private final String cep;
     @ManyToOne
     private Estado estado;
+    @OneToOne(mappedBy = "compra", cascade = CascadeType.PERSIST)
+    private final Pedido pedido;
 
     public Compra(@Email @NotBlank String email, @NotBlank String nome,
                   @NotBlank String sobrenome, @NotBlank @Documento String documento,
                   @NotBlank String endereco, @NotBlank String complemento, @NotNull Pais pais,
-                  @NotBlank String telefone, @NotBlank String cep) {
+                  @NotBlank String telefone, @NotBlank String cep, Function<Compra, Pedido> funcaoCriacaoPedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -49,6 +56,7 @@ public class Compra {
         this.pais = pais;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = funcaoCriacaoPedido.apply(this);
     }
 
     public void setEstado(@NotNull @Valid Estado estado) {
@@ -70,6 +78,7 @@ public class Compra {
                 ", telefone='" + telefone + '\'' +
                 ", cep='" + cep + '\'' +
                 ", estado=" + estado +
+                ", pedido=" + pedido +
                 '}';
     }
 }
